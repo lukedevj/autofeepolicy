@@ -4,7 +4,9 @@ Establishing automatic fees policies.
 
 ## Requirements
 
-- `(Python >= 3.6, LND, BOS)`
+- [Python >= 3.6](https://www.python.org/)
+- [LND](https://github.com/LightningNetwork/lnd)
+- [BOS](https://github.com/alexbosworth/balanceofsatoshis)
 
 ## Install
 ```bash
@@ -20,6 +22,31 @@ $ cd ..
 
 ```bash
 $ autofeepolicy --help
+Usage: autofeepolicy fees [OPTIONS]
+
+  Establishing automatic fees policies.
+
+  To edit the rules:
+
+      $ nano ~/.autofeepolicy/autofeepolicy.yaml
+
+Options:
+  -n, --node TEXT             Use a specific node configured in Balance of
+                              Satoshi.
+  -a, --avoid TEXT            Specify all channels that should be avoided.
+  -s, --activate-policy-auto  activate automated fee policy.
+  --help                      Show this message and exit.
+(venv) ➜ feepolicy autofeepolicy -d ~/.getch/nodes/carol -n regtest --help     
+Usage: autofeepolicy [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  -d, --datadir PATH  The path to lnd base directory.  [default: ~/.lnd]
+  -n, --network TEXT  The network lnd is running  [default: regtest]
+  --help              Show this message and exit.
+
+Commands:
+  fees  Establishing automatic fees policies.
+
 $ nano ~/.autofeepolicy/autofeepolicy.yaml
 ```
 
@@ -48,11 +75,11 @@ Testing the software without applying the rules.
 ```bash
 # Testing the software and avoiding specific channels.
 $ autofeepolicy fees
-
+# Outbound is not less than 25%, so it should be applied at a rate of 5.
 +----------------------------+-------------+--------------+-----------------+------------+
 |             Id             | Inbound (%) | Outbound (%) |     Capacity    | Fee Policy |
 +----------------------------+-------------+--------------+-----------------+------------+
-| 0dac05b357e1c926325c234423 |     73%     |     28%      | $ 1,960,000 sat |   5 sat    |
+| 0dac05b357e1c926325c234423 |     73%     |     28%      | $ 1,960,000 sat |     5      |
 +----------------------------+-------------+--------------+-----------------+------------+
 ```
 
