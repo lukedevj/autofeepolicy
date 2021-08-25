@@ -1,0 +1,15 @@
+# Will apply rules to all channels except channels outside this scope and channels that are in void.
+all:
+    - IF(OLP > 20, 20)
+
+# Apply rules for this specific channel.
+0318d4e22cf1f76766bb6c73ce0e83805e9a93b20dac05b357e1c926325c234423:
+    # If "inbound" is greater than or equal to 82%, increase the forward rate to 600.
+    - IF(ILP > 82, 600)
+    # If the "outbound" is less than 25%, decrease the rate to 1 otherwise increase to 5.
+    - IF(OLP < 25, 1, 5)
+    # Expresions: (not < > >= <= != | LIQUIDITY INBOUND OUTBOUND OLP ILP)
+
+# Avoid (x and y).
+avoid:
+    - 02eda3fc37f5c7d8d3cbc999b5b9c4fdb58ca6736ff267c575bbc8f779994fa882
