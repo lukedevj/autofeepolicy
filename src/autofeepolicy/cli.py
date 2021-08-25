@@ -20,7 +20,7 @@ with open(CONF, 'r') as file:
     '--datadir', '-d', help='The path to lnd base directory.', show_default=True, default='~/.lnd', type=click.Path()
 )
 @click.option(
-    '--network', '-n', help='The network lnd is running', show_default=True, default='regtest', type=click.STRING
+    '--network', '-n', help='The network lnd is running', show_default=True, default='mainnet', type=click.STRING
 )
 @click.pass_context
 def cli(ctx, datadir: str,  network: str):
