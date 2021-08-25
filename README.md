@@ -12,7 +12,7 @@ Establishing automatic fees policies.
 ```bash
 $ git clone https://github.com/lukedevj/autofeepolicy.git
 $ cd ./autofeepolicy
-$ python3 setup.py install
+$ python3 setup.py install --user
 $ cd ..
 ```
 
