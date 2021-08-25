@@ -22,26 +22,11 @@ $ cd ..
 
 ```bash
 $ autofeepolicy --help
-Usage: autofeepolicy fees [OPTIONS]
-
-  Establishing automatic fees policies.
-
-  To edit the rules:
-
-      $ nano ~/.autofeepolicy/autofeepolicy.yaml
-
-Options:
-  -n, --node TEXT             Use a specific node configured in Balance of
-                              Satoshi.
-  -a, --avoid TEXT            Specify all channels that should be avoided.
-  -s, --activate-policy-auto  activate automated fee policy.
-  --help                      Show this message and exit.
-(venv) ➜ feepolicy autofeepolicy -d ~/.getch/nodes/carol -n regtest --help     
 Usage: autofeepolicy [OPTIONS] COMMAND [ARGS]...
 
 Options:
   -d, --datadir PATH  The path to lnd base directory.  [default: ~/.lnd]
-  -n, --network TEXT  The network lnd is running  [default: regtest]
+  -n, --network TEXT  The network lnd is running  [default: mainnet]
   --help              Show this message and exit.
 
 Commands:
