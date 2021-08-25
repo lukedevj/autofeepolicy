@@ -83,4 +83,37 @@ $ autofeepolicy fees
 +----------------------------+-------------+--------------+-----------------+------------+
 ```
 
+We can also pass the avoid as an argument.
+```
+$ autofeepolicy fees --avoid 0318d4e22cf1f76766bb6c73ce0e83805e9a93b20dac05b357e1c926325c234423
++----------------------------+-------------+--------------+-----------------+------------+
+|             Id             | Inbound (%) | Outbound (%) |     Capacity    | Fee Policy |
++----------------------------+-------------+--------------+-----------------+------------+
+| 6ff267c575bbc8f779994fa882 |     72%     |     29%      | $ 1,960,000 sat |     20     |
++----------------------------+-------------+--------------+-----------------+------------+
+# As I only have two payment channels I had to remove 6ff267c575bbc8f779994fa882 from the configuration for it to work.
+```
+To apply the tax policy rules you must pass --activate-policy-auto as an argument
+```
+$ autofeepolicy fees --activate-policy-auto
++----------------------------+-------------+--------------+-----------------+------------+
+|             Id             | Inbound (%) | Outbound (%) |     Capacity    | Fee Policy |
++----------------------------+-------------+--------------+-----------------+------------+
+| 0dac05b357e1c926325c234423 |     73%     |     28%      | $ 1,960,000 sat |     5      |
+| 6ff267c575bbc8f779994fa882 |     72%     |     29%      | $ 1,960,000 sat |     20     |
++----------------------------+-------------+--------------+-----------------+------------+
+```
+
+## Cronjob
+```
+$ which autofeepolicy
+/home/linux/.local/bin/autofeepolicy
+
+$ which python3
+/usr/bin/python3
+
+$ crontab -e
+# m h  dom mon dow   command
+*/10 * * * * /usr/bin/python3 /home/linux/.local/bin/autofeepolicy fees --activate-policy-auto
+```
 
