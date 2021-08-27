@@ -15,7 +15,6 @@ Establishing automatic fees policies.
 $ git clone https://github.com/lukedevj/autofeepolicy.git
 $ cd ./autofeepolicy
 $ python3 setup.py install --user
-$ cd ..
 ```
 
 ## How to use?
@@ -34,6 +33,7 @@ Options:
 Commands:
   fees  Establishing automatic fees policies.
 
+$ mv cronjob.sh ~/.autofeepolicy
 $ nano ~/.autofeepolicy/autofeepolicy.yaml
 ```
 
@@ -93,14 +93,8 @@ $ autofeepolicy fees --activate-policy-auto
 
 ## Cronjob
 ```
-$ which autofeepolicy
-/home/linux/.local/bin/autofeepolicy
-
-$ which python3
-/usr/bin/python3
-
 $ crontab -e
 # m h  dom mon dow   command
-*/10 * * * * /usr/bin/python3 /home/linux/.local/bin/autofeepolicy fees --activate-policy-auto
+*/10 * * * * /bin/bash ~/.autofeepolicy/cronjob.sh
 ```
 
