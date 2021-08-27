@@ -2,6 +2,8 @@
 
 Establishing automatic fees policies.
 
+[![Donate](https://img.shields.io/badge/Donate-Bitcoin-green.svg)](https://coinos.io/lukedevj)
+
 ## Requirements
 
 - [Python >= 3.6](https://www.python.org/)
