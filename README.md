@@ -71,7 +71,7 @@ $ autofeepolicy fees
 ```
 
 We can also pass the avoid as an argument.
-```
+```bash
 $ autofeepolicy fees --avoid 0318d4e22cf1f76766bb6c73ce0e83805e9a93b20dac05b357e1c926325c234423
 +----------------------------+-------------+--------------+-----------------+------------+
 |             Id             | Inbound (%) | Outbound (%) |     Capacity    | Fee Policy |
@@ -81,7 +81,7 @@ $ autofeepolicy fees --avoid 0318d4e22cf1f76766bb6c73ce0e83805e9a93b20dac05b357e
 # As I only have two payment channels I had to remove 6ff267c575bbc8f779994fa882 from the configuration for it to work.
 ```
 To apply the tax policy rules you must pass --activate-policy-auto as an argument
-```
+```bash
 $ autofeepolicy fees --activate-policy-auto
 +----------------------------+-------------+--------------+-----------------+------------+
 |             Id             | Inbound (%) | Outbound (%) |     Capacity    | Fee Policy |
@@ -92,7 +92,7 @@ $ autofeepolicy fees --activate-policy-auto
 ```
 
 ## Cronjob
-```
+```bash
 $ crontab -e
 # m h  dom mon dow   command
 */10 * * * * /bin/bash ~/.autofeepolicy/cronjob.sh
