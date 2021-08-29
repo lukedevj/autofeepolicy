@@ -80,7 +80,7 @@ $ autofeepolicy fees --avoid 0318d4e22cf1f76766bb6c73ce0e83805e9a93b20dac05b357e
 +----------------------------+-------------+--------------+-----------------+------------+
 # As I only have two payment channels I had to remove 6ff267c575bbc8f779994fa882 from the configuration for it to work.
 ```
-To apply the tax policy rules you must pass --activate-policy-auto as an argument
+To apply the fees policy rules you must pass --activate-policy-auto as an argument
 ```bash
 $ autofeepolicy fees --activate-policy-auto
 +----------------------------+-------------+--------------+-----------------+------------+
