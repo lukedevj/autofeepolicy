@@ -1,7 +1,7 @@
 from prettytable import PrettyTable
 from .utils.helpers import (
     touchdir, touchfile, expanduser, 
-    updatepolicyfee, 
+    updatepolicyfee, percentage,
     which, system
 )
 from yaml import safe_load
@@ -40,7 +40,7 @@ def cli(ctx, datadir: str,  network: str, restlisten: str):
     '--avoid', '-a', help='Specify all channels that should be avoided.', multiple=True
 )
 @click.option(
-    '--activate-policy-auto', '-s', is_flag=True, help='activate automated fee policy.'
+    '--activate-policy-auto', '-p', is_flag=True, help='Activate automated fee policy.'
 )
 @click.pass_context
 def fees(ctx, node: str, avoid: tuple, activate_policy_auto: bool):
@@ -57,7 +57,8 @@ def fees(ctx, node: str, avoid: tuple, activate_policy_auto: bool):
         restlisten=ctx.obj['restlisten']
     )
     table = PrettyTable([
-        'Id', 'Inbound (%)', 'Outbound (%)', 'Capacity', 'Fee Policy', 
+        'Channels', 'Alias', 'Total Inbound (%)', 'Total Outbound (%)', 
+        'Total Reserve (%)', 'Total Capacity', 'Fee Policy', 
     ])
 
     avoid_identifiers = set(config.get('avoid') if config.get('avoid') else {})
@@ -67,6 +68,10 @@ def fees(ctx, node: str, avoid: tuple, activate_policy_auto: bool):
         channel['remote_pubkey'] for channel in next(grpc.listchannels()) \
             if not (channel['remote_pubkey'] in avoid_identifiers)
     )
+    if not channel_identifiers:
+        click.echo('[!] No channels were found.')
+        raise click.Abort()
+    
     channel_policies = {}
     for x in channel_identifiers:
         v = config.get('all')
@@ -81,59 +86,55 @@ def fees(ctx, node: str, avoid: tuple, activate_policy_auto: bool):
             )
 
     if not (channel_policies):
-        click.echo(f'[!] No rules were found in {CONF}')
+        click.echo(f'[!] No rules were found in {CONF}.')
         raise click.Abort()
 
     for identify in channel_identifiers:
-        total_inbound, total_outbound = 0, 0
-        total_capacity = 0 
-
+        total_remote_reserve, total_local_reserve = (0, 0)
+        total_inbound, total_outbound, total_capacity = (0, 0, 0)
+        channel_alias = next(grpc.getnodeinfo(identify))['alias']
+        total_channels = 0
         for channel in next(grpc.filterchannel(identify)):
-            channel_capacity = int(channel['capacity'])
-            channel_capacity-= (
-                  int(channel['local_chan_reserve_sat'])
-                + int(channel['remote_chan_reserve_sat'])
-            )
+            remote_balance = int(channel['remote_balance']) 
+            remote_reserve = int(channel['remote_chan_reserve_sat'])
+            if (remote_balance >= remote_reserve):
+                total_remote_reserve += remote_reserve
+            total_inbound += remote_balance
 
-            channel_inbound = int(channel['remote_balance'])
-            channel_outbound = int(channel['local_balance'])
+            local_balance = int(channel['local_balance'])
+            local_reserve = int(channel['local_chan_reserve_sat'])
+            if (local_balance >= local_reserve):
+                total_local_reserve += local_reserve
+            
+            total_outbound += local_balance
+            total_capacity += int(channel['capacity'])
+            total_channels += 1
 
-            total_inbound += channel_inbound
-            total_outbound += channel_outbound
-            total_capacity += channel_capacity
+        outbound_capacity_percentage = percentage(total_outbound, total_capacity)
+        inbound_capacity_percentage = percentage(total_inbound, total_capacity)
+        reserve_capacity_percentage = percentage(
+            total_local_reserve + total_remote_reserve, total_capacity
+        )
 
-        outbound_capacity_percentage = int(100 * (total_outbound / total_capacity))
-        inbound_capacity_percentage = int(100 * (total_inbound / total_capacity))
         channels_fee_policy = {}
         for x in channel_policies.get(identify, []):
-            formula = str(x[3:].split(',')[0])
+            if not ('IF' in x): continue
 
+            formula = str(x[3:].split(',')[0])
             if ('INBOUND' in formula):
-                formula = formula.replace(
-                    'INBOUND', str(total_inbound)
-                )
+                formula = formula.replace('INBOUND', str(total_inbound))
             
             if ('OUTBOUND' in formula):
-                formula = formula.replace(
-                    'OUTBOUND', str(total_outbound)
-                )
+                formula = formula.replace('OUTBOUND', str(total_outbound))
             
             if ('LIQUIDITY' in formula):
-                formula = formula.replace(
-                    'LIQUIDITY', str(total_capacity)
-                )
+                formula = formula.replace('LIQUIDITY', str(total_capacity))
             
             if 'OLP' in formula: 
-                formula = formula.replace(
-                    'OLP', str(outbound_capacity_percentage)
-                )
+                formula = formula.replace('OLP', str(outbound_capacity_percentage))
             
             if ('ILP' in formula):
-                formula = formula.replace(
-                    'ILP', str(inbound_capacity_percentage)
-                )
-
-            if not ('IF' in x): continue
+                formula = formula.replace('ILP', str(inbound_capacity_percentage))
 
             resolve = eval(formula)
             fees = list(map(
@@ -155,10 +156,12 @@ def fees(ctx, node: str, avoid: tuple, activate_policy_auto: bool):
 
         if channels_fee_policy.get(identify):
             table.add_row([
-                identify[40:], 
-                f"{inbound_capacity_percentage}%", 
-                f"{outbound_capacity_percentage}%",
-                "$ {:0,.0f} sat".format(channel_capacity), 
+                total_channels,
+                channel_alias, 
+                "{:.2f}%".format(inbound_capacity_percentage), 
+                "{:.2f}%".format(outbound_capacity_percentage),
+                "{:.2f}%".format(reserve_capacity_percentage),
+                "{:0,.0f} sat".format(total_capacity), 
                 f"{channels_fee_policy[identify]}"
             ])
 
