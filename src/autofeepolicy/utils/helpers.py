@@ -2,16 +2,34 @@ from os import popen, makedirs, system
 from json import loads
 from os.path import exists, expanduser
 
+def percentage(x: int, y: int) -> int:
+    if not isinstance(x, (int, float)):
+        raise ValueError(
+            'Input values should be a number, your first input is a %s' % type(x))
+
+    if not isinstance(y, (int, float)):
+        raise ValueError(
+            'Input values should be a number, your second input is a %s' % type(y))
+    
+    try:
+        p = (x / float(y))
+        return  (p * 100)
+    except ZeroDivisionError:
+        raise Exception('ZeroDivisionError: division by zero')
+    
 def shell(command: str) -> str:
     return popen(command).read()
 
+
 def which(name: str) -> str:
     return shell(f'which {name}')[:-1]
+
 
 def touchdir(path: str) -> str:
     path = expanduser(path)
     makedirs(path, exist_ok=True)
     return path
+
 
 def touchfile(path: str) -> str:
     path = expanduser(path)
