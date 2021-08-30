@@ -4,7 +4,7 @@ from requests import request
 
 class Grpc:
 
-    def __init__(self, datadir: str, network: str):
+    def __init__(self, datadir: str, network: str, restlisten: str=None):
         if (datadir[-1] == '/'):
             self.datadir = datadir[:-1]
         else:
@@ -13,12 +13,15 @@ class Grpc:
         self.network = network
         self.tlscert = f'{self.datadir}/tls.cert'
 
-        self.config = config.load(f'{self.datadir}/lnd.conf')
-        self.rpclisten = self.config.get(
-            'restlisten', '127.0.0.1:8080'
-        )
+        if restlisten:
+            self.restlisten = restlisten
+        else:
+            self.config = config.load(f'{self.datadir}/lnd.conf')
+            self.restlisten = self.config.get(
+                'restlisten', '127.0.0.1:8080'
+            )
 
-        self.rpchost = f'https://{self.rpclisten}/v1'
+        self.rpchost = f'https://{self.restlisten}/v1'
         self.macaroon = f'{self.datadir}/data/chain/bitcoin/{self.network}/admin.macaroon'
         if not glob(self.macaroon):
             self.macaroon = self.macaroon.replace('/data','')
