@@ -20,16 +20,13 @@ def percentage(x: int, y: int) -> int:
 def shell(command: str) -> str:
     return popen(command).read()
 
-
 def which(name: str) -> str:
     return shell(f'which {name}')[:-1]
-
 
 def touchdir(path: str) -> str:
     path = expanduser(path)
     makedirs(path, exist_ok=True)
     return path
-
 
 def touchfile(path: str) -> str:
     path = expanduser(path)
