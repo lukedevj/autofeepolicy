@@ -26,9 +26,10 @@ $ autofeepolicy --help
 Usage: autofeepolicy [OPTIONS] COMMAND [ARGS]...
 
 Options:
-  -d, --datadir PATH  The path to lnd base directory.  [default: ~/.lnd]
-  -n, --network TEXT  The network lnd is running  [default: mainnet]
-  --help              Show this message and exit.
+  -d, --datadir PATH     The path to lnd base directory.  [default: ~/.lnd]
+  -n, --network TEXT     The network lnd is running  [default: mainnet]
+  -r, --restlisten TEXT  Specify your node REST API hos and port.
+  --help                 Show this message and exit.
 
 Commands:
   fees  Establishing automatic fees policies.
