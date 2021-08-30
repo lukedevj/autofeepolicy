@@ -10,7 +10,6 @@ def percentage(x: int, y: int) -> int:
     if not isinstance(y, (int, float)):
         raise ValueError(
             'Input values should be a number, your second input is a %s' % type(y))
-    
     try:
         p = (x / float(y))
         return  (p * 100)
