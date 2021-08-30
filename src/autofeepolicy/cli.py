@@ -22,11 +22,15 @@ with open(CONF, 'r') as file:
 @click.option(
     '--network', '-n', help='The network lnd is running', show_default=True, default='mainnet', type=click.STRING
 )
+@click.option(
+    '--restlisten', '-r', help='Specify your nodes REST API hos and port.', type=click.STRING
+)
 @click.pass_context
-def cli(ctx, datadir: str,  network: str):
+def cli(ctx, datadir: str,  network: str, restlisten: str):
     ctx.ensure_object(dict)
     ctx.obj['datadir'] = expanduser(datadir)
     ctx.obj['network'] = network
+    ctx.obj['restlisten'] = restlisten
 
 @cli.command()
 @click.option(
@@ -49,7 +53,8 @@ def fees(ctx, node: str, avoid: tuple, activate_policy_auto: bool):
 
     grpc = Grpc(
         datadir=ctx.obj['datadir'], 
-        network=ctx.obj['network']
+        network=ctx.obj['network'],
+        restlisten=ctx.obj['restlisten']
     )
     table = PrettyTable([
         'Id', 'Inbound (%)', 'Outbound (%)', 'Capacity', 'Fee Policy', 
