@@ -1,2 +1,2 @@
 #!/bin/bash
-~/.local/bin/autofeepolicy fees --activate-policy-auto &
+~/.local/bin/autofeepolicy fees >> ~/.autofeepolicy/autofeepolicy.logs
