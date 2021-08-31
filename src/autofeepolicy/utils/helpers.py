@@ -35,10 +35,16 @@ def touchfile(path: str) -> str:
     return path 
 
 def updatepolicyfee(**kwargs: dict) -> str:
-    command = '/usr/local/bin/bos fees'
+    if exists('/usr/local/bin/bos'):
+        command = '/usr/local/bin/bos'
+    elif exists('/usr/bin/bos'):
+        command = '/usr/bin/bos'
+    else:
+        command = shell('which bos').strip()
     if not (command):
         raise Exception('Balance of Satoshi is not installed.')
     
+    command+= ' fees'
     command+= (
         f' --node {kwargs.get("node")}' if kwargs.get('node') else ''
     )
